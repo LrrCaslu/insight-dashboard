@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { CSVRow } from "@/types/csv";
 import { countValues } from "@/utils/xlsxParser";
 
@@ -75,9 +75,9 @@ export function BarChartCard({ title, questions, data, groupIndex }: BarChartCar
   };
 
   return (
-    <div className="bg-card rounded-xl p-6 card-shadow animate-fade-in">
+    <div className="bg-card rounded-xl p-6 card-shadow animate-fade-in overflow-hidden">
       <h3 className="font-semibold text-foreground mb-4">{title}</h3>
-      <div className="h-80">
+      <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -91,12 +91,6 @@ export function BarChartCard({ title, questions, data, groupIndex }: BarChartCar
               axisLine={{ stroke: "hsl(var(--border))" }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Legend 
-              wrapperStyle={{ paddingTop: 10 }}
-              formatter={(value) => (
-                <span className="text-sm text-foreground">{value}</span>
-              )}
-            />
             {answerKeys.map((key, index) => (
               <Bar 
                 key={key}
@@ -108,15 +102,33 @@ export function BarChartCard({ title, questions, data, groupIndex }: BarChartCar
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="mt-4 text-xs text-muted-foreground">
-        <p className="font-medium mb-2">Legenda das questões:</p>
-        <ul className="space-y-1 max-h-32 overflow-y-auto">
-          {questions.map((q, idx) => (
-            <li key={idx} className="line-clamp-1">
-              <span className="font-medium">Q{groupIndex * 10 + idx + 1}:</span> {q}
-            </li>
+      
+      {/* Answer Legend */}
+      <div className="mt-4 max-h-24 overflow-y-auto border-t border-border pt-3">
+        <p className="text-xs font-medium text-muted-foreground mb-2">Respostas:</p>
+        <div className="flex flex-wrap gap-2">
+          {answerKeys.map((key, index) => (
+            <div key={key} className="flex items-center gap-1.5 text-xs bg-muted/50 px-2 py-1 rounded">
+              <span 
+                className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
+                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+              />
+              <span className="text-foreground truncate max-w-[150px]" title={key}>{key}</span>
+            </div>
           ))}
-        </ul>
+        </div>
+      </div>
+      
+      {/* Questions Legend */}
+      <div className="mt-3 max-h-28 overflow-y-auto border-t border-border pt-3">
+        <p className="text-xs font-medium text-muted-foreground mb-2">Questões:</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs">
+          {questions.map((q, idx) => (
+            <div key={idx} className="truncate text-muted-foreground" title={q}>
+              <span className="font-medium text-foreground">Q{groupIndex * 10 + idx + 1}:</span> {q}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -44,21 +44,19 @@ export function PieChartCard({ title, data, colors = DEFAULT_COLORS }: PieChartC
   };
 
   return (
-    <div className="bg-card rounded-xl p-6 card-shadow animate-fade-in">
+    <div className="bg-card rounded-xl p-6 card-shadow animate-fade-in overflow-hidden">
       <h3 className="font-semibold text-foreground mb-4">{title}</h3>
-      <div className="h-72">
+      <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={chartData}
               cx="50%"
               cy="50%"
-              innerRadius={50}
-              outerRadius={90}
+              innerRadius={40}
+              outerRadius={70}
               paddingAngle={2}
               dataKey="value"
-              label={({ name, percentage }) => `${percentage}%`}
-              labelLine={false}
             >
               {chartData.map((_, index) => (
                 <Cell 
@@ -69,17 +67,24 @@ export function PieChartCard({ title, data, colors = DEFAULT_COLORS }: PieChartC
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip />} />
-            <Legend 
-              layout="horizontal"
-              align="center"
-              verticalAlign="bottom"
-              wrapperStyle={{ paddingTop: 20 }}
-              formatter={(value) => (
-                <span className="text-sm text-foreground">{value}</span>
-              )}
-            />
           </PieChart>
         </ResponsiveContainer>
+      </div>
+      <div className="mt-4 max-h-32 overflow-y-auto">
+        <div className="flex flex-wrap gap-2">
+          {chartData.map((item, index) => (
+            <div key={index} className="flex items-center gap-1.5 text-xs bg-muted/50 px-2 py-1 rounded">
+              <span 
+                className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
+                style={{ backgroundColor: colors[index % colors.length] }}
+              />
+              <span className="text-foreground truncate max-w-[120px]" title={item.name}>
+                {item.name}
+              </span>
+              <span className="text-muted-foreground">({item.percentage}%)</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
