@@ -51,13 +51,13 @@ const Index = () => {
                 Painel de Avaliação Institucional
               </h1>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Faça upload do arquivo CSV com os dados da pesquisa para visualizar os resultados de forma interativa.
+                Faça upload do arquivo Excel (.xlsx) com os dados da pesquisa para visualizar os resultados de forma interativa.
               </p>
             </div>
             <CSVUploader onDataParsed={setParsedData} />
             
             <div className="mt-12 p-6 bg-card rounded-xl card-shadow max-w-lg">
-              <h3 className="font-medium text-foreground mb-3">Formato esperado do CSV:</h3>
+              <h3 className="font-medium text-foreground mb-3">Formato esperado do arquivo Excel:</h3>
               <ul className="text-sm text-muted-foreground space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2" />
@@ -69,7 +69,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2" />
-                  <span><strong>Colunas 3-47:</strong> Respostas das questões</span>
+                  <span><strong>Colunas 3-45:</strong> Respostas das questões</span>
                 </li>
               </ul>
             </div>

@@ -1,44 +1,39 @@
 import { useState, useCallback } from "react";
 import { Upload, FileText, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { parseCSV } from "@/utils/csvParser";
+import { parseXLSX } from "@/utils/xlsxParser";
 import { ParsedCSVData } from "@/types/csv";
 
-interface CSVUploaderProps {
+interface XLSXUploaderProps {
   onDataParsed: (data: ParsedCSVData) => void;
 }
 
-export function CSVUploader({ onDataParsed }: CSVUploaderProps) {
+export function CSVUploader({ onDataParsed }: XLSXUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleFile = useCallback((file: File) => {
+  const handleFile = useCallback(async (file: File) => {
     setError(null);
     
-    if (!file.name.endsWith('.csv')) {
-      setError("Por favor, selecione um arquivo CSV válido.");
+    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+      setError("Por favor, selecione um arquivo Excel válido (.xlsx ou .xls).");
       return;
     }
 
     setFileName(file.name);
+    setIsLoading(true);
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const text = e.target?.result as string;
-        const parsedData = parseCSV(text);
-        onDataParsed(parsedData);
-      } catch (err) {
-        setError("Erro ao processar o arquivo CSV. Verifique o formato.");
-        setFileName(null);
-      }
-    };
-    reader.onerror = () => {
-      setError("Erro ao ler o arquivo.");
+    try {
+      const parsedData = await parseXLSX(file);
+      onDataParsed(parsedData);
+    } catch (err) {
+      setError("Erro ao processar o arquivo Excel. Verifique o formato.");
       setFileName(null);
-    };
-    reader.readAsText(file, 'UTF-8');
+    } finally {
+      setIsLoading(false);
+    }
   }, [onDataParsed]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
@@ -78,14 +73,24 @@ export function CSVUploader({ onDataParsed }: CSVUploaderProps) {
       >
         <input
           type="file"
-          accept=".csv"
+          accept=".xlsx,.xls"
           onChange={handleInputChange}
           className="hidden"
-          id="csv-upload"
+          id="xlsx-upload"
         />
-        <label htmlFor="csv-upload" className="cursor-pointer block">
+        <label htmlFor="xlsx-upload" className="cursor-pointer block">
           <div className="flex flex-col items-center gap-4">
-            {fileName ? (
+            {isLoading ? (
+              <>
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                </div>
+                <div>
+                  <p className="text-lg font-medium text-foreground">Processando arquivo...</p>
+                  <p className="text-sm text-muted-foreground mt-1">Aguarde um momento</p>
+                </div>
+              </>
+            ) : fileName ? (
               <>
                 <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center">
                   <FileText className="w-8 h-8 text-accent" />
@@ -102,10 +107,10 @@ export function CSVUploader({ onDataParsed }: CSVUploaderProps) {
                 </div>
                 <div>
                   <p className="text-lg font-medium text-foreground">
-                    Arraste o arquivo CSV aqui
+                    Arraste o arquivo Excel aqui
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    ou clique para selecionar
+                    ou clique para selecionar (.xlsx, .xls)
                   </p>
                 </div>
               </>
