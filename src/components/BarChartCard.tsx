@@ -1,6 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts";
 import { CSVRow } from "@/types/csv";
-import { countValues } from "@/utils/csvParser";
+import { countValues } from "@/utils/xlsxParser";
 
 interface BarChartCardProps {
   title: string;

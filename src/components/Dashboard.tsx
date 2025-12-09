@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Users, School, ClipboardList, BarChart3 } from "lucide-react";
 import { ParsedCSVData, ChartData, CSVRow } from "@/types/csv";
-import { countValues, getUniqueValues } from "@/utils/csvParser";
+import { countValues, getUniqueValues } from "@/utils/xlsxParser";
 import { StatsCard } from "./StatsCard";
 import { PieChartCard } from "./PieChartCard";
 import { BarChartCard } from "./BarChartCard";
