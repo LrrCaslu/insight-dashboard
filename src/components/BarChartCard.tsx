@@ -23,16 +23,6 @@ const COLORS = [
 ];
 
 export function BarChartCard({ title, questions, data, groupIndex }: BarChartCardProps) {
-  // Get all unique answer values across all questions
-  const allAnswers = new Set<string>();
-  questions.forEach(q => {
-    data.forEach(row => {
-      const val = row[q]?.trim();
-      if (val) allAnswers.add(val);
-    });
-  });
-  const answerKeys = Array.from(allAnswers).sort();
-
   // Build chart data: one object per question with counts for each answer
   const chartData = questions.map((question, idx) => {
     const counts = countValues(data, question);
@@ -40,11 +30,24 @@ export function BarChartCard({ title, questions, data, groupIndex }: BarChartCar
       question: `Q${groupIndex * 10 + idx + 1}`,
       fullQuestion: question,
     };
-    answerKeys.forEach(key => {
-      entry[key] = counts[key] || 0;
+    Object.entries(counts).forEach(([key, value]) => {
+      if (value > 0) {
+        entry[key] = value;
+      }
     });
     return entry;
   });
+
+  // Get only answer keys that have at least one non-zero value across all questions
+  const answersWithData = new Set<string>();
+  chartData.forEach(entry => {
+    Object.entries(entry).forEach(([key, value]) => {
+      if (key !== 'question' && key !== 'fullQuestion' && typeof value === 'number' && value > 0) {
+        answersWithData.add(key);
+      }
+    });
+  });
+  const answerKeys = Array.from(answersWithData).sort();
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
