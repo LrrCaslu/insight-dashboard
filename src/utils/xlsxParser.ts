@@ -47,7 +47,11 @@ export function parseXLSX(file: File): Promise<ParsedCSVData> {
         ) || headers[1];
 
         const questionColumns = headers.filter(h => 
-          h !== roleColumn && h !== schoolColumn
+          h !== roleColumn && 
+          h !== schoolColumn &&
+          !h.toLowerCase().includes("carimbo") &&
+          !h.toLowerCase().includes("data/hora") &&
+          !h.toLowerCase().includes("timestamp")
         );
 
         resolve({
